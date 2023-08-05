@@ -1,45 +1,37 @@
-# This workflow will build a golang project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
-
 name: Go
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
-    branches: [ "main" ]
+    branches: [main]
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.20'
-
-    - name: Build
-      run: go build -v ./...
-
-    - name: Test
-      run: go test -v ./...
-
-    - name: Build docker
-        id: build
-        uses: cloudposse/github-action-docker-build-push@main
+      - name: Set up Go
+        uses: actions/setup-go@v2
         with:
-          registry: registry.hub.docker.com
-          organization: "${{ github.event.repository.owner.login }}"
-          repository: "${{ github.event.repository.name }}"
-          login: "${{ secrets.DOCKERHUB_USERNAME }}"
-          password: "${{ secrets.DOCKERHUB_PASSWORD }}"
-          platforms: linux/amd64,linux/arm64
+          go-version: 1.17
 
-     outputs:
-      image: ${{ steps.build.outputs.image }}
-      tag: ${{ steps.build.outputs.tag }}
+      - name: Build
+        run: go build -v ./...
 
-  
+      - name: Test
+        run: go test -v ./...
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: alifpratamaaa99/belajar-cicd:latest
