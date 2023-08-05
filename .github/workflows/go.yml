@@ -34,8 +34,8 @@ jobs:
         password: "${{ secrets.DOCKERHUB_PASSWORD }}"
         
      - name: Build and push
-       id: docker_build
-       uses: docker/build-push-action@v2
-       with:
-         push: true
-         tags: alifpratamaaa99/belajar-cicd:latest
+         id: docker_build
+         uses: docker/build-push-action@v2
+         with:
+           push: true
+           tags: alifpratamaaa99/belajar-cicd:latest
